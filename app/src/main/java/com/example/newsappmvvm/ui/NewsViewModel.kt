@@ -7,10 +7,7 @@ import com.example.newsappmvvm.ui.models.NewsResponse
 import com.example.newsappmvvm.ui.repository.NewsRepository
 import com.example.newsappmvvm.ui.util.Resource
 import kotlinx.coroutines.launch
-import okhttp3.Response
-
-
-
+import retrofit2.Response
 
 class NewsViewModel(
     val newsRepository : NewsRepository
