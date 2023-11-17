@@ -1,17 +1,13 @@
 package com.example.newsappmvvm.ui.fragment
 
 import android.os.Bundle
-import android.text.Editable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.viewbinding.library.fragment.viewBinding
 import android.widget.AbsListView
-import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,13 +16,10 @@ import com.example.newsappmvvm.databinding.FragmentSearchNewsBinding
 import com.example.newsappmvvm.ui.NewsActivity
 import com.example.newsappmvvm.ui.NewsViewModel
 import com.example.newsappmvvm.ui.adapters.NewsAdapter
+import com.example.newsappmvvm.ui.models.NewsResponse
 import com.example.newsappmvvm.ui.util.Constants
-import com.example.newsappmvvm.ui.util.Constants.Companion.SEARCH_NEWS_TIME_DELAY
-import com.example.newsappmvvm.ui.util.Resource
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.example.newsappmvvm.ui.util.NetworkResult
+import com.example.newsappmvvm.ui.util.handleApiError
 
 class SearchNewsFragment:Fragment() {
 
@@ -46,6 +39,11 @@ class SearchNewsFragment:Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupUI()
+        setupObserver()
+    }
+
+    private fun setupUI() {
         viewModel = (activity as NewsActivity).viewModel
         setupRecyclerview()
 
@@ -60,48 +58,39 @@ class SearchNewsFragment:Fragment() {
         }
 
 
-        var job: Job? = null
-        binding.etSearch.addTextChangedListener {editable ->
-            job?.cancel()
-            job = MainScope().launch {
-                delay(SEARCH_NEWS_TIME_DELAY)
-
-                editable?.let {
-                    if (editable.toString().isNotEmpty()){
-                        viewModel.searchNews(editable.toString())
-                    }
-                }
+        binding.apply {
+            etSearch.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    // Do something when the "Done" button is clicked on the keyboard
+                    searchNews()
+                    true
+                } else false
             }
         }
+    }
 
-        viewModel.searchNews.observe(viewLifecycleOwner, Observer {response ->
-            when(response){
-                is Resource.Success -> {
-                    hideProgressBar()
-                    response.data?.let {newsResponse ->
-                        newsAdapter.differ.submitList(newsResponse.articles.toList())
-                        val totalPages = newsResponse.totalResults / Constants.QUERY_PAGE_SIZE + 2
-                        isLastPage= viewModel.searchNewsPage == totalPages
-                        if (isLastPage){
-                            binding.rvSearchNews.setPadding(0,0,0,0)
-                        }
-
-
-                    }
-                }
-                is Resource.Error -> {
-                    hideProgressBar()
-                    response.message?.let {
-                        Toast.makeText(activity, "An error occured: $it", Toast.LENGTH_LONG).show()
-                    }
-                }
-
-                is Resource.Loading -> {
-                    showProgressBar()
-                }
+    private fun setupObserver() {
+        viewModel.searchNews.observe(viewLifecycleOwner) {
+            hideProgressBar()
+            when (it) {
+                is NetworkResult.Success -> renderList(it.data)
+                is NetworkResult.Loading -> showProgressBar()
+                is NetworkResult.Failure -> handleApiError(it){ searchNews() }
             }
+        }
+    }
 
-        })
+    private fun renderList(response: NewsResponse) {
+        newsAdapter.differ.submitList(response.articles.toList())
+        val totalPages = response.totalResults / Constants.QUERY_PAGE_SIZE + 2
+        isLastPage= viewModel.breakingNewsPage == totalPages
+        if (isLastPage){
+            binding.rvSearchNews.setPadding(0, 0, 0, 0)
+        }
+    }
+
+    private fun searchNews(){
+        viewModel.refreshBreakingNewsList(binding.etSearch.text.toString().trim())
     }
 
     private fun showProgressBar(){

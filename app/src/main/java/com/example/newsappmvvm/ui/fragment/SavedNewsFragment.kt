@@ -1,4 +1,4 @@
-package com.example.newsapp.ui.fragment
+package com.example.newsappmvvm.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.viewbinding.library.fragment.viewBinding
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,6 +33,11 @@ class SavedNewsFragment: Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupUI()
+        setupObserver()
+    }
+
+    private fun setupUI() {
         viewModel = (activity as NewsActivity).viewModel
         setupRecyclerview()
 
@@ -58,13 +62,13 @@ class SavedNewsFragment: Fragment(){
                 target: RecyclerView.ViewHolder
             ): Boolean {
                 return true
-             }
+            }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val article = newsAdapter.differ.currentList[position]
                 viewModel.deleteArticle(article)
-                Snackbar.make(view,"Successfully delete Articles", Snackbar.LENGTH_LONG).apply {
+                Snackbar.make(requireView(),"Successfully delete Articles", Snackbar.LENGTH_LONG).apply {
                     setAction("Undo"){
                         viewModel.saveArticle(article)
                     }
@@ -73,13 +77,15 @@ class SavedNewsFragment: Fragment(){
             }
         }
 
-          ItemTouchHelper(itemTouchHelperCallback).apply {
-              attachToRecyclerView(binding.rvSavedNews)
-          }
+        ItemTouchHelper(itemTouchHelperCallback).apply {
+            attachToRecyclerView(binding.rvSavedNews)
+        }
+    }
 
-        viewModel.getSavedNews().observe(viewLifecycleOwner, Observer {articles ->
-          newsAdapter.differ.submitList(articles)
-        })
+    private fun setupObserver() {
+        viewModel.getSavedNews().observe(viewLifecycleOwner) { articles ->
+            newsAdapter.differ.submitList(articles)
+        }
     }
 
     private fun setupRecyclerview(){

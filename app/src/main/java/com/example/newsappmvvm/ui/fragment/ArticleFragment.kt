@@ -12,6 +12,7 @@ import com.example.newsappmvvm.R
 import com.example.newsappmvvm.databinding.FragmentArticleBinding
 import com.example.newsappmvvm.ui.NewsActivity
 import com.example.newsappmvvm.ui.NewsViewModel
+import com.example.newsappmvvm.ui.util.snackBar
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -39,7 +40,7 @@ class ArticleFragment: Fragment(){
         }
         binding.fab.setOnClickListener {
             viewModel.saveArticle(article)
-            Snackbar.make(view,"Article Saved Successfully",Snackbar.LENGTH_SHORT).show()
+            requireView().snackBar("Article Saved Successfully")
         }
     }
 }

@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/savedNewsFragment"
-        android:name="com.example.newsapp.ui.fragment.SavedNewsFragment"
+        android:name="com.example.newsappmvvm.ui.fragment.SavedNewsFragment"
         android:label="SavedNewsFragment" >
         <action
             android:id="@+id/action_savedNewsFragment_to_articleFragment"

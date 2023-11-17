@@ -16,7 +16,7 @@ interface NewsAPI {
         @Query("apiKey")
         apiKey:String = API_KEY
 
-    ): Response<NewsResponse>
+    ): NewsResponse
 
 
     @GET("v2/everything")
@@ -28,6 +28,6 @@ interface NewsAPI {
         @Query("apiKey")
         apiKey:String = API_KEY
 
-    ): Response<NewsResponse>
+    ): NewsResponse
 
 }
