@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/breakingNewsFragment"
-        android:name="com.example.newsapp.ui.fragment.BreakingNewsFragment"
+        android:name="com.example.newsappmvvm.ui.fragment.BreakingNewsFragment"
         android:label="BreakingNewsFragment" >
         <action
             android:id="@+id/action_breakingNewsFragment_to_articleFragment"
@@ -44,5 +44,9 @@
     <fragment
         android:id="@+id/articleFragment"
         android:name="com.example.newsappmvvm.ui.fragment.ArticleFragment"
-        android:label="ArticleFragment" />
+        android:label="ArticleFragment" >
+        <argument
+            android:name="article"
+            app:argType="com.example.newsappmvvm.ui.models.Article" />
+    </fragment>
 </navigation>
