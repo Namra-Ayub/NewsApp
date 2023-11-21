@@ -15,7 +15,7 @@ fun Fragment.handleApiError(
         else -> {
             val responseString = failure.errorBody?.string().toString()
             val jsonObject = JSONObject(responseString)
-            val error = if(jsonObject.has("message")) jsonObject.get("message") else responseString
+            val error = if(jsonObject.has("message")) jsonObject.getString("message") else responseString
             requireView().snackBar(error.toString())
         }
     }

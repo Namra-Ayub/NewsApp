@@ -4,6 +4,8 @@ import com.example.newsappmvvm.ui.api.ApiCallHandler
 import com.example.newsappmvvm.ui.api.RetrofitInstance
 import com.example.newsappmvvm.ui.db.ArticleDatabase
 import com.example.newsappmvvm.ui.models.Article
+import com.example.newsappmvvm.ui.models.NewsResponse
+import com.example.newsappmvvm.ui.util.NetworkResult
 import java.util.Locale.IsoCountryCode
 
 class NewsRepository(
