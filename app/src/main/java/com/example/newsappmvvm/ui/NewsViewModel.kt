@@ -10,6 +10,7 @@ import android.net.NetworkCapabilities.TRANSPORT_CELLULAR
 import android.net.NetworkCapabilities.TRANSPORT_ETHERNET
 import android.net.NetworkCapabilities.TRANSPORT_WIFI
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -34,8 +35,16 @@ class NewsViewModel(
     var searchNewsPage = 1
     var searchNewsResponse: NetworkResult.Success<NewsResponse>? = null
 
+    var isRecreated = false
 
     init {
+        if (isRecreated){
+            Log.d("NewsViewModel", "Recreated")
+        }else {
+            Log.d("NewsViewModel", "First time Created")
+            isRecreated = true
+        }
+
         getBreakingNews("us")
     }
 

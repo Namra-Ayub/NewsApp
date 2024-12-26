@@ -48,13 +48,8 @@ class SearchNewsFragment:Fragment() {
         setupRecyclerview()
 
         newsAdapter.setOnItemClickListener {
-            val bundle = Bundle().apply {
-                putSerializable("article", it)
-            }
-            findNavController().navigate(
-                R.id.action_searchNewsFragment_to_articleFragment,
-                bundle
-            )
+            val directions = SearchNewsFragmentDirections.actionSearchNewsFragmentToArticleFragment(article = it)
+            findNavController().navigate(directions)
         }
 
 

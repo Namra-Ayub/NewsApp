@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.viewbinding.library.fragment.viewBinding
 import android.widget.AbsListView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -126,7 +127,7 @@ class BreakingNewsFragment: Fragment(){
             addOnScrollListener(this@BreakingNewsFragment.scrollListener)
         }
         newsAdapter.setOnItemClickListener {
-            val directions = BreakingNewsFragmentDirections.actionBreakingNewsFragmentToArticleFragment(it)
+            val directions = BreakingNewsFragmentDirections.actionBreakingNewsFragmentToArticleFragment(article = it)
             findNavController().navigate(directions)
         }
     }
